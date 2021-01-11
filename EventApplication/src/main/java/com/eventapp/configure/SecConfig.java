@@ -7,18 +7,18 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import com.eventapp.service.EventService;
 @EnableWebSecurity
 public class SecConfig extends WebSecurityConfigurerAdapter{
 
-	@Autowired
-	private MyAuthEntryPoint myAuthEntryPoint;
 	
 	@Autowired
-	private DetailService detailService;;
+	private MyAuthEntryPoint authEntryPoint;
+	
+	@Autowired
+	private UserDetailsService detailService;
 	
 	//auth
 	@Override
@@ -28,9 +28,7 @@ public class SecConfig extends WebSecurityConfigurerAdapter{
 	//auth.inMemoryAuthentication()
 		//.withUser("ani").password("a123").roles("ADMIN")
 		//.and()
-		//.withUser("ram").password("r123").roles("MGR")
-		//.and()
-		//.withUser("baby").password("b123").roles("USR");
+		//.withUser("ram").password("r123").roles("CLERK");;
 	}
 	
 	@Bean
@@ -43,10 +41,9 @@ public class SecConfig extends WebSecurityConfigurerAdapter{
 		
 		  http.csrf().disable() .authorizeRequests()
 		  .antMatchers("/admin/**").hasAnyRole("ADMIN")
-		  .antMatchers("/mgr/**").hasAnyRole("ADMIN","MGR")
-		  .antMatchers("/user/**").hasAnyRole("USR","ADMIN","MGR")
-		  .antMatchers("/home/**").permitAll() .and().httpBasic()
-		  .authenticationEntryPoint(myAuthEntryPoint) .and()
+		  .antMatchers("/clerk/**").hasAnyRole("ADMIN","CLERK")
+		  .and().httpBasic()
+		  .and()
 		  .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		 
 	}

@@ -1,5 +1,6 @@
 package com.eventapp.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -7,6 +8,10 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.eventapp.dto.TicketBookingRequest;
+import com.eventapp.dto.TicketBookingResponse;
+import com.eventapp.dto.TicketCancleRequest;
+import com.eventapp.dto.TicketCancleResponse;
 import com.eventapp.entities.Event;
 import com.eventapp.exceptions.EventNotFoundException;
 import com.eventapp.repo.EventRepo;
@@ -30,10 +35,12 @@ public class EventServiceImpl implements EventService{
 	}
 
 	@Override
-	public Event getEventById(int eventId) {
-		return eventRepo.findById(eventId).orElseThrow(()->new EventNotFoundException("product with id:"+eventId+"not found"));
+	public Event findByEventId(int eventId) {
+		return eventRepo.findById(eventId).orElseThrow(()->new EventNotFoundException("event info with id:"+eventId+"not found"));
 	}
 
+	
+	
 	@Override
 	public Event addEvent(Event event) {
 		eventRepo.save(event);
@@ -42,49 +49,82 @@ public class EventServiceImpl implements EventService{
 
 	@Override
 	public Event updateEvent(int eventId, Event event) {
-		Event eventToUpdate=getEventById(eventId);
-		eventToUpdate.setPrice(event.getPrice());
+		Event eventToUpdate=findByEventId(eventId);
+		eventToUpdate.setEventTicketPrice(event.getEventTicketPrice());
 		eventToUpdate.setDiscount(event.getDiscount());
+		eventToUpdate.setNoOfTicket(event.getNoOfTicket());
 		eventRepo.save(eventToUpdate);
 		return eventToUpdate;
 	}
 
 	@Override
 	public Event deleteEvent(int eventId) {
-		Event eventToDelete=getEventById(eventId);
+		Event eventToDelete=findByEventId(eventId);
 		eventRepo.delete(eventToDelete);
 		return eventToDelete;
 	}
 
 	@Override
-	public Event findByUserName(String username) {
-		return null;
+	public Event findByEventName(String eventName) {
+		return eventRepo.findByEventName(eventName);
 	}
-	private Event getTicketById(int ticketId) {
-		return eventRepo.findById(ticketId).orElseThrow(()->new EventNotFoundException("product with id:"+ticketId+"not found"));
-	}
+	
+
 	@Override
-	public Event addTicket(Event ticket) {
-		eventRepo.save(ticket);
-		return ticket;
+	public List<Event> findByEventDateBetween(LocalDate date1, LocalDate date2) {
+		return eventRepo.findByEventDateBetween(date1, date2);
 	}
 
 	@Override
-	public Event cancleTicket(int eventId, Event event) {
-		Event ticketToDelete=getTicketById(eventId);
-		eventRepo.delete(ticketToDelete);
-		return ticketToDelete;
+	public TicketBookingResponse bookTickets(TicketBookingRequest request) {
+		TicketBookingResponse response=new TicketBookingResponse();
+		Event eventToBook=findByEventId(request.getEventId());
+		if(request.getNoOfTicket()>eventToBook.getNoOfTicket()) {
+			response.setMessage("no of ticket requested is more than what we can book");
+			response.setAmountPayable(0.0);
+		}
+		else {
+			eventToBook.setNoOfTicket(eventToBook.getNoOfTicket()-request.getNoOfTicket());
+			this.updateEvent(eventToBook.getId(), eventToBook);
+			response.setMessage("ticket book successfully");
+			double pricePayable=(eventToBook.getEventTicketPrice()*request.getNoOfTicket())*(100-eventToBook.getDiscount())/100;
+			response.setAmountPayable(pricePayable);
+			}
+		return response;
 	}
-
-
+//cancle tickets
 	@Override
-	public void eventRequest(int eventId, int noOfTickets) {
-		// TODO Auto-generated method stub
-		Event tickets=getEventById(eventId);
-		tickets.setNoOfTicket(tickets.getNoOfTicket()+noOfTickets);
-		eventRepo.save(tickets);
+	public TicketCancleResponse cancleTickets(TicketCancleRequest request) {
+		TicketCancleRequest response=new TicketCancleRequest();
+		Event eventToCancel=findByEventId(request.getEventId());
+		if(eventToCancel==null) {
+			throw new EventNotFoundException("event with id :" +request.getEventId()+  "is not found");
+		}
+		LocalDate eventDate=eventToCancel.getDate();
+		if(eventDate.isBefore(LocalDate.now())) {
+			
+		}
+		eventToCancel.setNoOfTicket(eventToCancel.getNoOfTicket()+request.getNoOfTicket());
+		//return 50% of booking amnt
+		double amountReturned=(eventToCancel.getEventTicketPrice()*eventToCancel.getNoOfTicket())*
+				(100 - eventToCancel.getDiscount())/100;
 		
+		TicketCancleResponse cancelResponse=new TicketCancleResponse();
+		cancelResponse.setAmountPayable(amountReturned);
+		cancelResponse.setMessage("tickets are cancelled");
+		return cancelResponse;
 	}
+
+	
+	
+	
+
+
+	
+
+	
+
+	
 	
 	
 }

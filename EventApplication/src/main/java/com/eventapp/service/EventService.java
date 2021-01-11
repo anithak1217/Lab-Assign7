@@ -1,19 +1,30 @@
 package com.eventapp.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
+import com.eventapp.dto.TicketBookingRequest;
+import com.eventapp.dto.TicketBookingResponse;
+import com.eventapp.dto.TicketCancleRequest;
+import com.eventapp.dto.TicketCancleResponse;
 import com.eventapp.entities.Event;
 
 public interface EventService {
 
 	public List<Event> getAllEvents() ;
-	public Event getEventById(int eventId) ;
+	public Event findByEventId(int eventId) ;
+	public Event findByEventName(String eventName);
 	public Event addEvent(Event event);
-	public Event updateEvent(int eventId, Event event);
+	Event updateEvent(int eventId, Event event);
+	public TicketBookingResponse bookTickets(TicketBookingRequest request);
 	public Event deleteEvent(int eventId);
-	public Event findByUserName(String username);
-	public Event addTicket(Event event);
-	public Event cancleTicket(int eventId, Event event);
-	void eventRequest(int eventId, int noOfTickets);
+	
+	public TicketCancleResponse cancleTickets(TicketCancleRequest request);
+	//public TicketCancleResponse cancleTickets(TicketCancleResponse response);
+	  
+	
+	public List<Event> findByEventDateBetween(LocalDate date1,LocalDate date2);
+	
+
 
 }

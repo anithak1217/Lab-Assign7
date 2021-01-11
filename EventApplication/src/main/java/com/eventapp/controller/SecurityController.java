@@ -1,31 +1,23 @@
 package com.eventapp.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class SecurityController {
 	
-	@RequestMapping("home")
-	public String hello()
-	{
-		return "hello home";
-	}
-	@RequestMapping("admin")
+	
+	@GetMapping("admin")
 	public String admin()
 	{
 		return "hello admin";
 	}
-	@RequestMapping("mgr")
-	public String mgr()
+	@GetMapping("clerk")
+	public String clerk()
 	{
-		return "hello mgr";
+		return "hello clerk";
 	}
-	@RequestMapping("user")
-	public String emp()
-	{
-		return "hello user";
-	}
+	
 	
 
 }

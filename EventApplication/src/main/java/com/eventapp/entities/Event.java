@@ -1,5 +1,6 @@
 package com.eventapp.entities;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -17,23 +18,22 @@ public class Event {
 	private Integer id;
 	
 	@Column(name="event_name",nullable=false,length=50)	
-	private String name;
+	private String eventName;
 	
 	@Column(name="event_location",nullable=false,length=50)	
-	private String location;
+	private String eventLocation;
 	
 	@Column(name="event_price",nullable=false,length=50)	
-	private Double price;	
-	
-	@Column(name="event_date",nullable=false,length=50)
-	private String date;	
+	private Double eventTicketPrice;	
 	
 	@Column(name="event_discount",nullable=false,length=50)
-	private Integer discount;
+	private double discount;
 	
 	@Column(name="event_noOfTicket",nullable=false,length=50)
 	private Integer noOfTicket;
 
+	@Column(name="event_date",nullable=false,length=50)
+	private LocalDate eventDate;	
 	public Integer getId() {
 		return id;
 	}
@@ -42,43 +42,43 @@ public class Event {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public String getEventName() {
+		return eventName;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setEventName(String eventName) {
+		this.eventName = eventName;
 	}
 
-	public String getLocation() {
-		return location;
+	public String getEventLocation() {
+		return eventLocation;
 	}
 
-	public void setLocation(String location) {
-		this.location = location;
+	public void setEventLocation(String eventLocation) {
+		this.eventLocation = eventLocation;
 	}
 
-	public Double getPrice() {
-		return price;
+	public Double getEventTicketPrice() {
+		return eventTicketPrice;
 	}
 
-	public void setPrice(Double price) {
-		this.price = price;
+	public void setEventTicketPrice(Double eventTicketPrice) {
+		this.eventTicketPrice = eventTicketPrice;
 	}
 
-	public String getDate() {
-		return date;
+	public LocalDate getDate() {
+		return eventDate;
 	}
 
-	public void setDate(String date) {
-		this.date = date;
+	public void setDate(LocalDate eventDate) {
+		this.eventDate = eventDate;
 	}
 
-	public Integer getDiscount() {
+	public Double getDiscount() {
 		return discount;
 	}
 
-	public void setDiscount(Integer discount) {
+	public void setDiscount(Double discount) {
 		this.discount = discount;
 	}
 
@@ -91,30 +91,22 @@ public class Event {
 	}
 
 	public Event() {
+		super();
+		// TODO Auto-generated constructor stub
 	}
 
-	public Event(String name, String location, Double price, String date, Integer discount, Integer noOfTicket) {
+	public Event(String eventName, String eventLocation, Double eventTicketPrice, double discount, Integer noOfTicket,
+			LocalDate eventDate) {
 		super();
-		this.name = name;
-		this.location = location;
-		this.price = price;
-		this.date = date;
+		this.eventName = eventName;
+		this.eventLocation = eventLocation;
+		this.eventTicketPrice = eventTicketPrice;
 		this.discount = discount;
 		this.noOfTicket = noOfTicket;
+		this.eventDate = eventDate;
 	}
 
-	public List<GrantedAuthority> getRoles() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 
-	public String getUserName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getPassword() {
-		// TODO Auto-generated method stub
-		return null;
-	}	
+	
 }
